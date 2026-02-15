@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Cozmo Eye Designer</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;500;600&display=swap');
+:root{
+  --bg:#070a0e;--panel:#0a0e15;--panel2:#0d1219;
+  --border:#16233a;--border2:#1e3050;
+  --accent:#00ccee;--accent2:#ff5522;--accent3:#33cc77;
+  --dimtext:#2d4d62;--bodytext:#7aa0b8;--inputbg:#050b10;
+  --hlbg:rgba(0,204,238,0.06);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{background:var(--bg);color:var(--bodytext);font-family:'Rajdhani',sans-serif;font-size:13px;display:flex;flex-direction:column}
+header{height:44px;background:var(--panel);border-bottom:1px solid rgba(0,204,238,.3);display:flex;align-items:center;padding:0 14px;gap:10px;flex-shrink:0;box-shadow:0 2px 30px rgba(0,204,238,.08)}
+.logo{font-family:'Orbitron',sans-serif;font-weight:900;font-size:13px;color:var(--accent);letter-spacing:5px;text-shadow:0 0 16px rgba(0,204,238,.65);white-space:nowrap}
+.logo b{color:var(--accent2)}
+.namewrap{display:flex;align-items:center;gap:7px;margin-left:14px;flex-shrink:0}
+.namewrap label{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--dimtext);letter-spacing:2px}
+#eyeName{font-family:'Share Tech Mono',monospace;font-size:11px;background:var(--inputbg);border:1px solid var(--border2);color:var(--accent);padding:3px 8px;width:120px;outline:none;letter-spacing:1px;transition:border-color .15s}
+#eyeName:focus{border-color:var(--accent);box-shadow:0 0 8px rgba(0,204,238,.25)}
+.hbtns{display:flex;gap:7px;margin-left:auto;align-items:center}
+.hbtn{font-family:'Orbitron',sans-serif;font-size:8px;font-weight:700;letter-spacing:2px;padding:5px 12px;border:1px solid;cursor:pointer;background:transparent;transition:all .18s;white-space:nowrap}
+.hbtn-r{color:var(--accent2);border-color:var(--accent2)}.hbtn-r:hover{background:rgba(255,85,34,.15);box-shadow:0 0 14px rgba(255,85,34,.4)}
+.hbtn-b{color:var(--accent);border-color:var(--accent)}.hbtn-b:hover{background:var(--hlbg);box-shadow:0 0 14px rgba(0,204,238,.35)}
+.hbtn-g{color:var(--accent3);border-color:var(--accent3)}.hbtn-g:hover{background:rgba(51,204,119,.12);box-shadow:0 0 14px rgba(51,204,119,.4)}
+.main{display:flex;flex:1;overflow:hidden;min-height:0}
+.lpanel{width:272px;min-width:272px;background:var(--panel);border-right:1px solid var(--border);overflow-y:auto;flex-shrink:0}
+.lpanel::-webkit-scrollbar{width:3px}.lpanel::-webkit-scrollbar-track{background:var(--panel)}.lpanel::-webkit-scrollbar-thumb{background:rgba(0,204,238,.35);border-radius:2px}
+.sec{border-bottom:1px solid var(--border)}
+.sec-hdr{display:flex;align-items:center;justify-content:space-between;padding:7px 10px;cursor:pointer;user-select:none;background:var(--panel2);transition:background .15s}
+.sec-hdr:hover{background:#0f1820}
+.sec-title{font-family:'Orbitron',sans-serif;font-size:8px;font-weight:700;letter-spacing:3px;color:var(--accent);text-shadow:0 0 8px rgba(0,204,238,.3)}
+.arrow{width:14px;height:14px;display:flex;align-items:center;justify-content:center;color:var(--accent);font-size:8px;transition:transform .2s;transform:rotate(0deg)}
+.sec-hdr.closed .arrow{transform:rotate(-90deg)}
+.sec-body{padding:8px 9px;display:flex;flex-direction:column;gap:3px}
+.sec-body.hidden{display:none}
+.glbl{font-family:'Orbitron',sans-serif;font-size:7px;letter-spacing:2px;color:var(--accent2);margin:5px 0 2px;opacity:.75;padding-left:1px}
+.hdiv{height:1px;background:var(--border);margin:4px 0}
+.prow{display:flex;flex-direction:column;gap:2px}
+.ptop{display:flex;align-items:center;gap:4px}
+.plbl{flex:1;font-size:11px;font-weight:500;color:var(--bodytext);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pnum{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--accent);background:var(--inputbg);border:1px solid var(--border);padding:2px 4px;width:52px;text-align:right;outline:none;flex-shrink:0;transition:border-color .15s}
+.pnum:focus{border-color:var(--accent);box-shadow:0 0 5px rgba(0,204,238,.2)}.pnum:hover{border-color:var(--border2)}
+.pslider{-webkit-appearance:none;width:100%;height:2px;background:var(--border2);outline:none;border-radius:1px;cursor:pointer}
+.pslider::-webkit-slider-thumb{-webkit-appearance:none;width:8px;height:8px;background:var(--accent);clip-path:polygon(50% 0%,100% 100%,0 100%);box-shadow:0 0 5px rgba(0,204,238,.65);cursor:pointer}
+.pslider.col2::-webkit-slider-thumb{background:var(--accent2);box-shadow:0 0 5px rgba(255,85,34,.65)}
+.pslider.col3::-webkit-slider-thumb{background:var(--accent3);box-shadow:0 0 5px rgba(51,204,119,.65)}
+.lrcols{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+.lrcol{display:flex;flex-direction:column;gap:2px}
+.lrcap{font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--dimtext);letter-spacing:1px;margin-bottom:1px}
+.lrcol .pnum{width:100%}
+.cwrap{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+.cside{display:flex;flex-direction:column;gap:2px}
+.cgrid{display:grid;grid-template-columns:1fr 1fr;gap:2px}
+.ccell{display:flex;flex-direction:column;gap:1px}
+.ccap{font-family:'Share Tech Mono',monospace;font-size:7px;color:var(--dimtext);letter-spacing:.5px}
+.ccell .pnum{width:100%;font-size:9px;padding:1px 3px}
+.rarea{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;background:radial-gradient(ellipse at 50% 40%,#050c11 0%,#020508 100%);position:relative;overflow:hidden;gap:10px}
+.rarea::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(0,204,238,.03) 0%,transparent 55%);pointer-events:none}
+.canvas-cap{font-family:'Orbitron',sans-serif;font-size:8px;letter-spacing:4px;color:var(--dimtext)}
+.cshell{position:relative;line-height:0}
+#eyeCanvas{display:block;background:#000;image-rendering:pixelated;image-rendering:crisp-edges;border:1px solid rgba(0,204,238,.3);box-shadow:0 0 40px rgba(0,204,238,.13),0 0 90px rgba(0,204,238,.05)}
+#scanOvl{position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(to bottom,rgba(0,0,0,0) 0px,rgba(0,0,0,0) calc(var(--sh,6px) * 0.5),rgba(0,0,0,1) calc(var(--sh,6px) * 0.5),rgba(0,0,0,0.28) var(--sh,6px));opacity:0;transition:opacity .2s}
+#scanOvl.on{opacity:1}
+.cctrls{display:flex;gap:7px;align-items:center;flex-wrap:wrap;justify-content:center}
+.tog{font-family:'Orbitron',sans-serif;font-size:7px;letter-spacing:1.5px;padding:4px 10px;border:1px solid var(--border);color:var(--dimtext);background:transparent;cursor:pointer;transition:all .18s}
+.tog.on{border-color:var(--accent);color:var(--accent);background:var(--hlbg)}.tog:hover:not(.on){color:var(--bodytext);border-color:var(--border2)}
+.cinfo{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--dimtext);display:flex;gap:16px}
+.cinfo em{color:var(--accent);font-style:normal}
+.sbar{position:absolute;bottom:0;left:0;right:0;height:20px;background:rgba(5,8,14,.94);border-top:1px solid var(--border);display:flex;align-items:center;padding:0 12px;gap:16px;font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--dimtext)}
+.sbar .ok{color:var(--accent3)}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">COZMO <b>EYE</b> DESIGNER</div>
+  <div class="namewrap">
+    <label>NAME:</label>
+    <input id="eyeName" type="text" value="neutral" maxlength="32" placeholder="neutral, angry…">
+  </div>
+  <div class="hbtns">
+    <button class="hbtn hbtn-r" onclick="resetNeutral()">⟳ RESET</button>
+    <button class="hbtn hbtn-b" onclick="trigImport()">↑ IMPORT</button>
+    <button class="hbtn hbtn-g" onclick="exportJSON()">↓ EXPORT JSON</button>
+    <input id="fileIn" type="file" accept=".json" style="display:none" onchange="importJSON(event)">
+  </div>
+</header>
+<div class="main">
+  <div class="lpanel" id="lpanel">
+    <div class="sec" id="secGeom"></div>
+    <div class="sec" id="secPos"></div>
+    <div class="sec" id="secGaze"></div>
+    <div class="sec" id="secUpper"></div>
+    <div class="sec" id="secLower"></div>
+  </div>
+  <div class="rarea" id="rarea">
+    <div class="canvas-cap">128 × 64 PIXEL DISPLAY</div>
+    <div class="cshell" id="cshell">
+      <canvas id="eyeCanvas" width="128" height="64"></canvas>
+      <div id="scanOvl"></div>
+    </div>
+    <div class="cctrls">
+      <button class="tog on" id="tGrid"  onclick="toggleGrid()">PIXEL GRID</button>
+      <button class="tog on" id="tScan"  onclick="toggleScan()">SCANLINES</button>
+      <button class="tog on" id="tGuide" onclick="toggleGuide()">GUIDELINES</button>
+    </div>
+    <div class="cinfo">
+      <span>128 × 64 px</span>
+      <span>ZOOM <em id="zoomLbl">6×</em></span>
+      <span>CURSOR <em id="curLbl">—</em></span>
+    </div>
+    <div class="sbar"><span class="ok">■ LIVE</span><span>SUPERELLIPSE RENDERER · COZMO EYE DESIGNER</span></div>
+  </div>
+</div>
+<script>
+'use strict';
+const CW=128,CH=64;
+let zoom=6,showGrid=true,showScan=true,showGuide=true;
+
+function defState(){return{
+  gap:5,
+  width_L:34,height_L:36,width_R:34,height_R:36,
+  superellipse_n_L:2.9,superellipse_n_R:2.9,
+  angle_deg_L:0.0,angle_deg_R:0.0,
+  scale_x_L:1.0,scale_y_L:1.0,scale_x_R:1.0,scale_y_R:1.0,
+  corner_TL_L:3,corner_TR_L:3,corner_BL_L:3,corner_BR_L:3,
+  corner_TL_R:3,corner_TR_R:3,corner_BL_R:3,corner_BR_R:3,
+  center_x:64,center_y:32,
+  eye_offset_x_L:0,eye_offset_y_L:0,eye_offset_x_R:0,eye_offset_y_R:0,
+  gaze_x:0.0,gaze_y:0.0,range_x:7,range_y:4,gaze_clamp_n:3.2,
+  upper_cover_L:0,upper_cover_R:0,
+  upper_x_L:0.0,upper_x_R:0.0,
+  upper_angle_deg_L:0.0,upper_angle_deg_R:0.0,
+  upper_width_L:1.15,upper_height_L:0.55,upper_width_R:1.15,upper_height_R:0.55,
+  upper_corner_BL_L:0,upper_corner_BR_L:0,upper_corner_BL_R:0,upper_corner_BR_R:0,
+  upper_curvature_L:0,upper_curvature_R:0,
+  upper_tension_L:0.30,upper_tension_R:0.30,
+  lower_cover_L:0,lower_cover_R:0,
+  lower_x_L:0.0,lower_x_R:0.0,
+  lower_angle_deg_L:0.0,lower_angle_deg_R:0.0,
+  lower_width_L:1.15,lower_height_L:0.55,lower_width_R:1.15,lower_height_R:0.55,
+  lower_corner_UL_L:0,lower_corner_UR_L:0,lower_corner_UL_R:0,lower_corner_UR_R:0,
+  lower_curvature_L:0,lower_curvature_R:0,
+  lower_tension_L:0,lower_tension_R:0,
+}}
+let S=defState();
+
+function clamp(v,lo,hi){return Math.min(hi,Math.max(lo,v))}
+function fmt(v,step){return step<1?parseFloat(v.toFixed(4)):Math.round(v*100)/100}
+function syncKey(k){
+  document.querySelectorAll('[data-key="'+k+'"]').forEach(el=>{
+    if(el.type==='range')el.value=S[k];
+    else el.value=fmt(S[k],parseFloat(el.step)||1);
+  });
+}
+function syncAll(){Object.keys(S).forEach(syncKey)}
+
+function mkNumInput(key,min,max,step){
+  const n=document.createElement('input');
+  n.type='number';n.className='pnum';n.min=min;n.max=max;n.step=step;
+  n.value=fmt(S[key]??0,step);n.dataset.key=key;
+  n.onchange=()=>{const v=clamp(parseFloat(n.value)||0,min,max);S[key]=v;syncKey(key);render()};
+  return n;
+}
+function mkSliderInput(key,min,max,step,cls){
+  const sl=document.createElement('input');
+  sl.type='range';sl.className='pslider'+(cls?' '+cls:'');
+  sl.min=min;sl.max=max;sl.step=step;sl.value=S[key]??0;sl.dataset.key=key;
+  sl.oninput=()=>{S[key]=parseFloat(sl.value);syncKey(key);render()};
+  return sl;
+}
+function mkDiv(){const d=document.createElement('div');d.className='hdiv';return d}
+function mkGrp(t){const g=document.createElement('div');g.className='glbl';g.textContent=t;return g}
+function ap(p,e){p.appendChild(e);return e}
+
+function mkSl(key,label,min,max,step,unit,slCls){
+  const w=document.createElement('div');w.className='prow';
+  const top=document.createElement('div');top.className='ptop';
+  const lbl=document.createElement('span');lbl.className='plbl';lbl.textContent=label+(unit?' ('+unit+')':'');
+  ap(top,lbl);ap(top,mkNumInput(key,min,max,step));
+  ap(w,top);ap(w,mkSliderInput(key,min,max,step,slCls));
+  return w;
+}
+function mkLR(keyL,keyR,label,min,max,step,unit,slCls){
+  const w=document.createElement('div');
+  const lbl=document.createElement('div');lbl.className='plbl';lbl.style.marginBottom='3px';
+  lbl.textContent=label+(unit?' ('+unit+')':'');ap(w,lbl);
+  const cols=document.createElement('div');cols.className='lrcols';
+  [['L',keyL],['R',keyR]].forEach(([side,key])=>{
+    const col=document.createElement('div');col.className='lrcol';
+    const cap=document.createElement('div');cap.className='lrcap';cap.textContent=side;ap(col,cap);
+    ap(col,mkNumInput(key,min,max,step));ap(col,mkSliderInput(key,min,max,step,slCls));
+    ap(cols,col);
+  });
+  ap(w,cols);return w;
+}
+function mkCorner4LR(kTLL,kTRL,kBLL,kBRL,kTLR,kTRR,kBLR,kBRR){
+  const w=document.createElement('div');
+  const lbl=document.createElement('div');lbl.className='plbl';lbl.style.marginBottom='4px';lbl.textContent='Corner Radius (px)';ap(w,lbl);
+  const cw=document.createElement('div');cw.className='cwrap';
+  [['L',[['TL',kTLL],['TR',kTRL],['BL',kBLL],['BR',kBRL]]],
+   ['R',[['TL',kTLR],['TR',kTRR],['BL',kBLR],['BR',kBRR]]]].forEach(([side,pairs])=>{
+    const cs=document.createElement('div');cs.className='cside';
+    const cap=document.createElement('div');cap.className='lrcap';cap.textContent=side;ap(cs,cap);
+    const cg=document.createElement('div');cg.className='cgrid';
+    pairs.forEach(([pos,key])=>{
+      const cc=document.createElement('div');cc.className='ccell';
+      const cl=document.createElement('div');cl.className='ccap';cl.textContent=pos;ap(cc,cl);
+      ap(cc,mkNumInput(key,0,20,0.5));ap(cg,cc);
+    });
+    ap(cs,cg);ap(cw,cs);
+  });
+  ap(w,cw);return w;
+}
+function mkCorner2LR(kLL,kRL,kLR,kRR,lA,lB){
+  const w=document.createElement('div');
+  const lbl=document.createElement('div');lbl.className='plbl';lbl.style.marginBottom='4px';lbl.textContent='Corner Radius (px)';ap(w,lbl);
+  const cw=document.createElement('div');cw.className='cwrap';
+  [['L',[[lA,kLL],[lB,kRL]]],
+   ['R',[[lA,kLR],[lB,kRR]]]].forEach(([side,pairs])=>{
+    const cs=document.createElement('div');cs.className='cside';
+    const cap=document.createElement('div');cap.className='lrcap';cap.textContent=side;ap(cs,cap);
+    const cg=document.createElement('div');cg.className='cgrid';
+    pairs.forEach(([pos,key])=>{
+      const cc=document.createElement('div');cc.className='ccell';
+      const cl=document.createElement('div');cl.className='ccap';cl.textContent=pos;ap(cc,cl);
+      ap(cc,mkNumInput(key,0,20,0.5));ap(cg,cc);
+    });
+    ap(cs,cg);ap(cw,cs);
+  });
+  ap(w,cw);return w;
+}
+
+function mkSection(id,title,buildFn){
+  const el=document.getElementById(id);el.innerHTML='';
+  const hdr=document.createElement('div');hdr.className='sec-hdr open';
+  hdr.innerHTML='<span class="sec-title">'+title+'</span><span class="arrow">▼</span>';
+  const body=document.createElement('div');body.className='sec-body';
+  hdr.onclick=()=>{hdr.classList.toggle('open');hdr.classList.toggle('closed');body.classList.toggle('hidden')};
+  buildFn(body);el.appendChild(hdr);el.appendChild(body);
+}
+
+function buildPanels(){
+  mkSection('secGeom','GEOMETRY',b=>{
+    ap(b,mkSl('gap','Gap',0,40,0.5,'px'));
+    ap(b,mkDiv());ap(b,mkGrp('EYE SIZE'));
+    ap(b,mkLR('width_L','width_R','Width',10,70,0.5,'px'));
+    ap(b,mkLR('height_L','height_R','Height',10,50,0.5,'px'));
+    ap(b,mkDiv());ap(b,mkGrp('SUPERELLIPSE N'));
+    ap(b,mkLR('superellipse_n_L','superellipse_n_R','N',1.2,12,0.1));
+    ap(b,mkDiv());ap(b,mkGrp('ROTATION'));
+    ap(b,mkLR('angle_deg_L','angle_deg_R','Angle',-45,45,0.5,'°'));
+    ap(b,mkDiv());ap(b,mkGrp('SCALE'));
+    ap(b,mkLR('scale_x_L','scale_x_R','Scale X',0.6,1.6,0.01));
+    ap(b,mkLR('scale_y_L','scale_y_R','Scale Y',0.6,1.6,0.01));
+    ap(b,mkDiv());ap(b,mkGrp('CORNER RADIUS'));
+    ap(b,mkCorner4LR('corner_TL_L','corner_TR_L','corner_BL_L','corner_BR_L','corner_TL_R','corner_TR_R','corner_BL_R','corner_BR_R'));
+  });
+  mkSection('secPos','POSITION',b=>{
+    ap(b,mkSl('center_x','Center X',0,128,0.5,'px'));
+    ap(b,mkSl('center_y','Center Y',0,64,0.5,'px'));
+    ap(b,mkDiv());ap(b,mkGrp('EYE OFFSET'));
+    ap(b,mkLR('eye_offset_x_L','eye_offset_x_R','Offset X',-30,30,0.5,'px'));
+    ap(b,mkLR('eye_offset_y_L','eye_offset_y_R','Offset Y',-30,30,0.5,'px'));
+  });
+  mkSection('secGaze','GAZE',b=>{
+    ap(b,mkSl('gaze_x','Gaze X',-1.2,1.2,0.01,'','col2'));
+    ap(b,mkSl('gaze_y','Gaze Y',-1.2,1.2,0.01,'','col2'));
+    ap(b,mkDiv());ap(b,mkGrp('RANGE'));
+    ap(b,mkSl('range_x','Range X',0,20,0.5,'px'));
+    ap(b,mkSl('range_y','Range Y',0,20,0.5,'px'));
+    ap(b,mkDiv());ap(b,mkGrp('CLAMP SHAPE'));
+    ap(b,mkSl('gaze_clamp_n','Clamp N',1.2,10,0.1));
+  });
+  mkSection('secUpper','UPPER LID',b=>{
+    ap(b,mkGrp('COVERAGE'));
+    ap(b,mkLR('upper_cover_L','upper_cover_R','Cover',0,1,0.005,'','col3'));
+    ap(b,mkDiv());ap(b,mkGrp('HORIZONTAL OFFSET (relative)'));
+    ap(b,mkLR('upper_x_L','upper_x_R','Pos X',-0.6,0.6,0.01));
+    ap(b,mkDiv());ap(b,mkGrp('ROTATION'));
+    ap(b,mkLR('upper_angle_deg_L','upper_angle_deg_R','Angle',-45,45,0.5,'°'));
+    ap(b,mkDiv());ap(b,mkGrp('SIZE  (relative to eye)'));
+    ap(b,mkLR('upper_width_L','upper_width_R','Width',0.5,1.8,0.01));
+    ap(b,mkLR('upper_height_L','upper_height_R','Height',0.1,1.2,0.01));
+    ap(b,mkDiv());ap(b,mkGrp('BOTTOM CORNER RADIUS'));
+    ap(b,mkCorner2LR('upper_corner_BL_L','upper_corner_BR_L','upper_corner_BL_R','upper_corner_BR_R','BL','BR'));
+    ap(b,mkDiv());ap(b,mkGrp('EDGE SHAPE'));
+    ap(b,mkLR('upper_curvature_L','upper_curvature_R','Curvature',-1,1,0.01));
+    ap(b,mkLR('upper_tension_L','upper_tension_R','Tension',0,1,0.01));
+  });
+  mkSection('secLower','LOWER LID',b=>{
+    ap(b,mkGrp('COVERAGE'));
+    ap(b,mkLR('lower_cover_L','lower_cover_R','Cover',0,1,0.005,'','col3'));
+    ap(b,mkDiv());ap(b,mkGrp('HORIZONTAL OFFSET (relative)'));
+    ap(b,mkLR('lower_x_L','lower_x_R','Pos X',-0.6,0.6,0.01));
+    ap(b,mkDiv());ap(b,mkGrp('ROTATION'));
+    ap(b,mkLR('lower_angle_deg_L','lower_angle_deg_R','Angle',-45,45,0.5,'°'));
+    ap(b,mkDiv());ap(b,mkGrp('SIZE  (relative to eye)'));
+    ap(b,mkLR('lower_width_L','lower_width_R','Width',0.5,1.8,0.01));
+    ap(b,mkLR('lower_height_L','lower_height_R','Height',0.1,1.2,0.01));
+    ap(b,mkDiv());ap(b,mkGrp('TOP CORNER RADIUS'));
+    ap(b,mkCorner2LR('lower_corner_UL_L','lower_corner_UR_L','lower_corner_UL_R','lower_corner_UR_R','UL','UR'));
+    ap(b,mkDiv());ap(b,mkGrp('EDGE SHAPE'));
+    ap(b,mkLR('lower_curvature_L','lower_curvature_R','Curvature',-1,1,0.01));
+    ap(b,mkLR('lower_tension_L','lower_tension_R','Tension',0,1,0.01));
+  });
+}
+
+/* ── RENDERER ── */
+const canvas=document.getElementById('eyeCanvas');
+const ctx=canvas.getContext('2d');
+
+function eyeCenters(){
+  const{center_x:cx,center_y:cy,gap,width_L:wL,width_R:wR,
+    eye_offset_x_L:oxL,eye_offset_y_L:oyL,eye_offset_x_R:oxR,eye_offset_y_R:oyR}=S;
+  return[cx-gap/2-wL/2+oxL, cy+oyL, cx+gap/2+wR/2+oxR, cy+oyR];
+}
+
+function gazeOffset(){
+  let gx=S.gaze_x*S.range_x, gy=S.gaze_y*S.range_y;
+  const n=S.gaze_clamp_n;
+  if(S.range_x>0&&S.range_y>0){
+    const nx=gx/S.range_x,ny=gy/S.range_y;
+    const m=Math.pow(Math.abs(nx),n)+Math.pow(Math.abs(ny),n);
+    if(m>1){const s=Math.pow(m,1/n);gx/=s;gy/=s;}
+  }
+  return[gx,gy];
+}
+
+function sePoints(a,b,n,steps=120){
+  n=Math.max(0.5,n);const pts=[];
+  for(let i=0;i<=steps;i++){
+    const t=(i/steps)*2*Math.PI,c=Math.cos(t),s=Math.sin(t);
+    pts.push([Math.sign(c)*Math.pow(Math.abs(c),2/n)*a, Math.sign(s)*Math.pow(Math.abs(s),2/n)*b]);
+  }
+  return pts;
+}
+
+function pathSE(cx,cy,w,h,n,angRad,sx,sy){
+  const a=(w/2)*sx,b=(h/2)*sy,pts=sePoints(a,b,n);
+  const ca=Math.cos(angRad),sa=Math.sin(angRad);
+  ctx.beginPath();
+  pts.forEach(([px,py],i)=>{
+    const rx=px*ca-py*sa+cx,ry=px*sa+py*ca+cy;
+    i===0?ctx.moveTo(rx,ry):ctx.lineTo(rx,ry);
+  });
+  ctx.closePath();
+}
+
+function drawLid(eyeCx,eyeCy,eyeW,eyeH,side,isUpper){
+  const pre=isUpper?'upper':'lower';
+  const cover=S[pre+'_cover_'+side];
+  if(cover<=0)return;
+  const relX=S[pre+'_x_'+side];
+  const angDeg=S[pre+'_angle_deg_'+side];
+  const relW=S[pre+'_width_'+side];
+  const relH=S[pre+'_height_'+side];
+  const curvature=S[pre+'_curvature_'+side];
+  const tension=S[pre+'_tension_'+side];
+  const lidW=eyeW*relW, lidH=eyeH*relH, hw=lidW/2;
+  const angRad=angDeg*Math.PI/180;
+  const eyeTop=eyeCy-eyeH/2, eyeBottom=eyeCy+eyeH/2;
+
+  // Contact edge: clamped strictly within eye bounds
+  const contactY=isUpper
+    ? clamp(eyeTop + cover*eyeH, eyeTop, eyeBottom)
+    : clamp(eyeBottom - cover*eyeH, eyeTop, eyeBottom);
+
+  const anchorX=eyeCx+relX*eyeW;
+  // Curvature: positive = edge bows toward iris center
+  const ctrlY=isUpper ? curvature*lidH*0.8 : -curvature*lidH*0.8;
+  const cr=(r,hw,h)=>clamp(r,0,Math.min(hw,h));
+
+  ctx.save();
+  ctx.translate(anchorX,contactY);
+  ctx.rotate(angRad);
+  ctx.beginPath();
+
+  if(isUpper){
+    const rBL=cr(S['upper_corner_BL_'+side],hw,lidH);
+    const rBR=cr(S['upper_corner_BR_'+side],hw,lidH);
+    ctx.moveTo(-hw,-9999); ctx.lineTo(hw,-9999); ctx.lineTo(hw,-rBR);
+    if(rBR>0)ctx.arcTo(hw,0,hw-rBR,0,rBR); else ctx.lineTo(hw,0);
+    ctx.bezierCurveTo(hw*tension*0.5,ctrlY,-hw*tension*0.5,ctrlY,-hw+rBL,0);
+    if(rBL>0)ctx.arcTo(-hw,0,-hw,-rBL,rBL); else ctx.lineTo(-hw,0);
+  } else {
+    const rUL=cr(S['lower_corner_UL_'+side],hw,lidH);
+    const rUR=cr(S['lower_corner_UR_'+side],hw,lidH);
+    ctx.moveTo(-hw,9999); ctx.lineTo(hw,9999); ctx.lineTo(hw,rUR);
+    if(rUR>0)ctx.arcTo(hw,0,hw-rUR,0,rUR); else ctx.lineTo(hw,0);
+    ctx.bezierCurveTo(hw*tension*0.5,ctrlY,-hw*tension*0.5,ctrlY,-hw+rUL,0);
+    if(rUL>0)ctx.arcTo(-hw,0,-hw,rUL,rUL); else ctx.lineTo(-hw,0);
+  }
+  ctx.closePath();
+  ctx.fill();
+  ctx.restore();
+}
+
+function renderOneEye(isLeft,cx,cy,gz){
+  const s=isLeft?'L':'R';
+  const w=S['width_'+s],h=S['height_'+s];
+  const n=S['superellipse_n_'+s];
+  const ar=S['angle_deg_'+s]*Math.PI/180;
+  const sx=S['scale_x_'+s],sy=S['scale_y_'+s];
+
+  ctx.save();
+  pathSE(cx,cy,w,h,n,ar,sx,sy);
+  ctx.clip();
+
+  // fill (gaze shifts the light pupil area)
+  ctx.fillStyle='#00ccee';
+  const fcx=cx+gz[0],fcy=cy+gz[1];
+  const fw=(w*sx+Math.abs(gz[0])*2)+8, fh=(h*sy+Math.abs(gz[1])*2)+8;
+  ctx.fillRect(fcx-fw/2,fcy-fh/2,fw,fh);
+
+  // lids
+  ctx.fillStyle='#000';
+  drawLid(cx,cy,w,h,s,true);
+  drawLid(cx,cy,w,h,s,false);
+  ctx.restore();
+
+  // outline
+  ctx.save();
+  pathSE(cx,cy,w,h,n,ar,sx,sy);
+  // ctx.strokeStyle='rgba(0,70,90,0.55)';ctx.lineWidth=0.5;ctx.stroke();
+  ctx.restore();
+}
+
+function render(){
+  ctx.clearRect(0,0,CW,CH);
+  ctx.fillStyle='#000';ctx.fillRect(0,0,CW,CH);
+  if(showGrid){
+    ctx.strokeStyle='rgba(0,100,60,0.13)';ctx.lineWidth=0.3;
+    for(let x=0;x<=CW;x+=8){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,CH);ctx.stroke();}
+    for(let y=0;y<=CH;y+=8){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(CW,y);ctx.stroke();}
+  }
+  if(showGuide){
+    ctx.save();ctx.strokeStyle='rgba(0,204,238,0.08)';ctx.lineWidth=0.5;
+    ctx.setLineDash([2,5]);
+    ctx.beginPath();ctx.moveTo(S.center_x,0);ctx.lineTo(S.center_x,CH);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(0,S.center_y);ctx.lineTo(CW,S.center_y);ctx.stroke();
+    ctx.setLineDash([]);ctx.restore();
+  }
+  const[lcx,lcy,rcx,rcy]=eyeCenters();
+  const gz=gazeOffset();
+  renderOneEye(true,lcx,lcy,gz);
+  renderOneEye(false,rcx,rcy,gz);
+}
+
+/* ── ZOOM ── */
+function applyZoom(){
+  canvas.style.width=(CW*zoom)+'px';canvas.style.height=(CH*zoom)+'px';
+  document.getElementById('zoomLbl').textContent=zoom+'×';
+  document.getElementById('scanOvl').style.setProperty('--sh',zoom+'px');
+}
+document.getElementById('cshell').addEventListener('wheel',e=>{
+  e.preventDefault();zoom=clamp(zoom+(e.deltaY<0?1:-1),2,12);applyZoom();
+},{passive:false});
+canvas.addEventListener('mousemove',e=>{
+  const r=canvas.getBoundingClientRect();
+  document.getElementById('curLbl').textContent=Math.floor((e.clientX-r.left)/zoom)+', '+Math.floor((e.clientY-r.top)/zoom);
+});
+canvas.addEventListener('mouseleave',()=>{document.getElementById('curLbl').textContent='—'});
+
+/* ── TOGGLES ── */
+function togBtn(id,on){document.getElementById(id).classList.toggle('on',on)}
+function toggleGrid(){showGrid=!showGrid;togBtn('tGrid',showGrid);render()}
+function toggleGuide(){showGuide=!showGuide;togBtn('tGuide',showGuide);render()}
+function toggleScan(){showScan=!showScan;togBtn('tScan',showScan);document.getElementById('scanOvl').classList.toggle('on',showScan)}
+
+/* ── JSON ── */
+function buildJSON(){
+  const name=document.getElementById('eyeName').value.trim()||'unnamed';
+  return{
+    meta:{name,version:1,canvas_w:CW,canvas_h:CH},
+    Geometry:{gap:S.gap,width_L:S.width_L,height_L:S.height_L,width_R:S.width_R,height_R:S.height_R,
+      superellipse_n_L:S.superellipse_n_L,superellipse_n_R:S.superellipse_n_R,
+      angle_deg_L:S.angle_deg_L,angle_deg_R:S.angle_deg_R,
+      scale_x_L:S.scale_x_L,scale_y_L:S.scale_y_L,scale_x_R:S.scale_x_R,scale_y_R:S.scale_y_R,
+      corner_TL_L:S.corner_TL_L,corner_TR_L:S.corner_TR_L,corner_BL_L:S.corner_BL_L,corner_BR_L:S.corner_BR_L,
+      corner_TL_R:S.corner_TL_R,corner_TR_R:S.corner_TR_R,corner_BL_R:S.corner_BL_R,corner_BR_R:S.corner_BR_R},
+    Position:{center_x:S.center_x,center_y:S.center_y,
+      eye_offset_x_L:S.eye_offset_x_L,eye_offset_y_L:S.eye_offset_y_L,
+      eye_offset_x_R:S.eye_offset_x_R,eye_offset_y_R:S.eye_offset_y_R},
+    Gaze:{gaze_x:S.gaze_x,gaze_y:S.gaze_y,range_x:S.range_x,range_y:S.range_y,gaze_clamp_n:S.gaze_clamp_n},
+    Lids:{
+      upper_cover_L:S.upper_cover_L,upper_cover_R:S.upper_cover_R,
+      lower_cover_L:S.lower_cover_L,lower_cover_R:S.lower_cover_R,
+      upper_x_L:S.upper_x_L,upper_x_R:S.upper_x_R,
+      lower_x_L:S.lower_x_L,lower_x_R:S.lower_x_R,
+      upper_angle_deg_L:S.upper_angle_deg_L,upper_angle_deg_R:S.upper_angle_deg_R,
+      lower_angle_deg_L:S.lower_angle_deg_L,lower_angle_deg_R:S.lower_angle_deg_R,
+      upper_width_L:S.upper_width_L,upper_height_L:S.upper_height_L,
+      upper_width_R:S.upper_width_R,upper_height_R:S.upper_height_R,
+      lower_width_L:S.lower_width_L,lower_height_L:S.lower_height_L,
+      lower_width_R:S.lower_width_R,lower_height_R:S.lower_height_R,
+      upper_corner_BL_L:S.upper_corner_BL_L,upper_corner_BR_L:S.upper_corner_BR_L,
+      upper_corner_BL_R:S.upper_corner_BL_R,upper_corner_BR_R:S.upper_corner_BR_R,
+      lower_corner_UL_L:S.lower_corner_UL_L,lower_corner_UR_L:S.lower_corner_UR_L,
+      lower_corner_UL_R:S.lower_corner_UL_R,lower_corner_UR_R:S.lower_corner_UR_R,
+      upper_curvature_L:S.upper_curvature_L,upper_curvature_R:S.upper_curvature_R,
+      lower_curvature_L:S.lower_curvature_L,lower_curvature_R:S.lower_curvature_R,
+      upper_tension_L:S.upper_tension_L,upper_tension_R:S.upper_tension_R,
+      lower_tension_L:S.lower_tension_L,lower_tension_R:S.lower_tension_R}
+  };
+}
+function exportJSON(){
+  const data=JSON.stringify(buildJSON(),null,2);
+  const name=(document.getElementById('eyeName').value.trim()||'cozmo_eye').replace(/\s+/g,'_');
+  const blob=new Blob([data],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');a.href=url;a.download=name+'.json';a.click();
+  URL.revokeObjectURL(url);
+}
+function trigImport(){document.getElementById('fileIn').click()}
+function importJSON(e){
+  const file=e.target.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    try{
+      const d=JSON.parse(ev.target.result);
+      if(d.meta?.name)document.getElementById('eyeName').value=d.meta.name;
+      ['Geometry','Position','Gaze','Lids'].forEach(sec=>{if(d[sec])Object.assign(S,d[sec])});
+      syncAll();render();
+    }catch(err){alert('Invalid JSON: '+err.message)}
+  };
+  reader.readAsText(file);e.target.value='';
+}
+function resetNeutral(){
+  S=defState();document.getElementById('eyeName').value='neutral';syncAll();render();
+}
+
+/* ── AUTO-FIT ZOOM ── */
+function fitZoom(){
+  const ra=document.getElementById('rarea');
+  zoom=clamp(Math.min(Math.floor((ra.clientWidth-80)/CW),Math.floor((ra.clientHeight-150)/CH)),2,12);
+  applyZoom();
+}
+window.addEventListener('resize',fitZoom);
+
+/* ── INIT ── */
+buildPanels();fitZoom();
+document.getElementById('scanOvl').classList.add('on');
+render();
+</script>
+</body>
+</html>
