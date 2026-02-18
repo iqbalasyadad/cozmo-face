@@ -180,8 +180,10 @@ class Spring1D:
 # 5. EYE SHAPE DATA  — loaded from JSON files
 # ---------------------------------------------------------------------------
 # JSON folder, relative to this script
-_JSON_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                            "References", "cozmo_face_json")
+_JSON_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), 
+                            os.pardir, "assets", "json")
+
+print(_JSON_FOLDER)
 
 # Full raw JSON params keyed by expression name (used by superellipse renderer)
 EYE_JSON: dict = {}
@@ -247,7 +249,7 @@ def _load_all_expressions(folder: str):
     if not files:
         raise FileNotFoundError(
             f"No JSON files found in: {folder}\n"
-            f"Make sure the folder 'References/cozmo_face_json/' exists "
+            f"Make sure the folder 'assets/json/' exists "
             f"next to this script.")
     for path in files:
         name = os.path.splitext(os.path.basename(path))[0]  # e.g. "happy_left"

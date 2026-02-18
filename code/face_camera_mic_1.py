@@ -252,8 +252,8 @@ class Spring1D:
 # 5. EYE SHAPE DATA  — loaded from JSON files
 # ---------------------------------------------------------------------------
 # JSON folder, relative to this script
-_JSON_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                            "References", "cozmo_face_json")
+_JSON_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), 
+                            os.pardir, "assets", "json")
 
 # Full raw JSON params keyed by expression name (used by superellipse renderer)
 EYE_JSON: dict = {}
