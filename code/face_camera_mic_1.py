@@ -53,7 +53,7 @@ except Exception:
 # ---------------------------------------------------------------------------
 FB_W,  FB_H  = 128, 64
 FPS_TARGET   = 60
-EYE_COLOR    = (2, 222, 254)      # #02DEFE cyan
+EYE_COLOR    = (0, 167, 222)
 BG_COLOR     = (0, 0, 0)
 EYE_GAP_PX   = 39.0               # center-to-center horizontal gap (Neutral baseline)
 
